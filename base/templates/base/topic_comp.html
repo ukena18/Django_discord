@@ -1,0 +1,7 @@
+<h3>Browse Topics</h3>
+    <div><a href="{% url 'base-home' %}">All</a></div>
+    <h4> rooms available {{room_count}} </h4>
+    <div><a href="{%url 'create' %}">Create a Room</a></div>
+    {% for topic in topics %}
+    <div><a href="{% url 'base-home'%}?q={{topic.name}}">{{topic.name}}</a></div>
+    {% endfor %}

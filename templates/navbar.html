@@ -1,0 +1,18 @@
+<h1><a href="#">My Navber </a></h1>
+<!--if the user is logged in show his name-->
+{% if request.user.is_authenticated %}
+<!--show user name-->
+<p>hello {{request.user}}</p>
+<a href="{% url 'logout-page' %}">LOgout</a>
+<!--if there is no user logged in show Login tag-->
+{% else %}
+
+<a href="{% url 'login-page' %}">Login here</a>
+{% endif %}
+
+<!--for searching -->
+<form method="GET" action="{% url 'base-home'%}">
+<!--    the name of input is q dont forget it we are using it in the home page -->
+    <input type="text" name="q" placeholder="Search" />
+
+</form>
