@@ -1,0 +1,19 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+<h1>{{user}}</h1>
+<div class="profile-container">
+    <div>
+        {% include 'base/topic_comp.html' %}
+    </div>
+    <div>
+        {% include 'base/feed_comp.html' %}
+    </div>
+    <div>
+        {% include  "base/activity_comp.html"%}
+
+    </div>
+</div>
+{% endblock %}

@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">
-    <title>Study BUd</title>
-</head>
-<body>
-<!--main template -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}" />
+    <title>StudyBuddy - Find study partners around the world!</title>
+  </head>
+
+  <body>
+
+    <!--main template -->
 <!--add navbar to  it -->
-{% include 'navbar.html' %}
-<!--    if there is flash messages show them-->
+    {% include 'navbar.html' %}
+    <!--    if there is flash messages show them-->
 <!--those flash messages are built-in django message system-->
 <!--it is only appear once then disappear -->
-    {% if messages %}
+
+        {% if messages %}
     <ul class="messages">
 <!--        all messages have their own tag, so you can give them a style-->
         {% for message in messages%}
@@ -22,9 +28,11 @@
     </ul>
     {% endif %}
 
-<img src="{% static 'images/helmet-1.png' %}"  alt="nos"/>
-{% block content %}
-{% endblock %}
+  {% block content %}
 
-</body>
+    {% endblock %}
+  <script src="{% static  'js/script.js' %}"></script>
+  </body>
 </html>
+
+

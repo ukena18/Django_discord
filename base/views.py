@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from .models import Room, Topic, Message
 # from forms.py import our custom form for RoomModel
 # you can use model and form together
-from .forms import RoomForm
+from .forms import RoomForm, UserForm
 # login_required is for function views authentication check
 from django.contrib.auth.decorators import login_required
 # Q is for search input  so we can interact with database faster
@@ -116,7 +116,7 @@ def home(request):
         Q(topic__name__icontains=q) | Q(name__icontains=q) | Q(description__icontains=q)
     )
     # get all the topocs
-    topic = Topic.objects.all()
+    topic = Topic.objects.all()[0:3]
     # count how many room are available
     room_count = rooms.count()
     # check the room messages that including q input
@@ -179,18 +179,20 @@ def userProfile(request, pk):
 def createRoom(request):
     # if it is post request
     if request.method == "POST":
-        # use customForm and fill it up with request.POST infos
-        form = RoomForm(request.POST)
-        # built in func if it is valid
-        if form.is_valid():
-            room = form.save(commit=False)
-            room.host=request.user
-            # save it and redirect it
-            form.save()
-            return redirect("base-home")
+        topic_name = request.POST.get("topic")
+        topic,created = Topic.objects.get_or_create(name=topic_name)
+        Room.objects.create(
+            host=request.user,
+            topic=topic,
+            name=request.POST.get("name"),
+            description=request.POST.get("description")
+        )
+
+        return redirect("base-home")
     # if it not request.POST send blank form to html file
     form = RoomForm()
-    context = {"form": form}
+    topics = Topic.objects.all()
+    context = {"form": form,"topics":topics}
     return render(request, "base/room_form.html", context)
 
 #  in order to create you gotta login first  from django.contrib.auth.decorators import login_required
@@ -202,6 +204,7 @@ def updateRoom(request, pk):
     room = Room.objects.get(id=int(pk))
     # to fillet it up our custom room form with current room info we can instance = room
     form = RoomForm(instance=room)
+    topics = Topic.objects.all()
 
     # only room.host can update room
     if request.user != room.host:
@@ -209,13 +212,15 @@ def updateRoom(request, pk):
 
     # if it is post request for updating page
     if request.method == "POST":
-        # ??????????????????????????????????
-        form = RoomForm(request.POST, instance=room)
-        # ??????????????????????????????????????
-        form.save()
+        topic_name = request.POST.get("topic")
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+        room.name = request.POST.get("name")
+        room.topic = topic
+        room.description = request.POST.get("description")
+        room.save()
         return redirect("base-home")
 
-    context = {"form": form}
+    context = {"form": form,"topics":topics,"room":room}
     return render(request, 'base/room_form.html', context)
 
 #  in order to create you gotta login first  from django.contrib.auth.decorators import login_required
@@ -245,3 +250,28 @@ def deleteMessage(request, pk):
         user_message.delete()
         return redirect("base-home")
     return render(request, 'base/delete.html', {"obj": user_message})
+
+
+
+@login_required(login_url="login-page")
+def updateUser(request):
+    user= request.user
+    form= UserForm(instance=user)
+
+    if request.method=="POST":
+        form = UserForm(request.POST,instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect("user-profile", pk=user.id )
+    return render(request,'base/update_user.html',{"form":form})
+
+def topicPage(request):
+    q = request.GET.get("q") if request.GET.get("q") is not None else ""
+    topics=Topic.objects.filter(name__icontains=q)
+    return render(request,'base/topics.html',{"topics":topics})
+
+
+def activityPAge(request):
+    room_messages= Message.objects.all()
+
+    return render(request,"base/activity.html",{"room_messages":room_messages})

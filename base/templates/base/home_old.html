@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+<h1> Home Page</h1>
+<div class="home-container">
+    {% include "base/topic_comp.html" %}
+    <hr>
+    {% include "base/feed_comp.html" %}
+    {% include "base/activity_comp.html" %}
+
+</div>
+
+{% endblock %}
